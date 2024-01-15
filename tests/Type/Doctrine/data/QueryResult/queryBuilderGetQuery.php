@@ -46,6 +46,13 @@ class QueryBuilderGetQuery
 			->getQuery();
 
 		assertType('Doctrine\ORM\Query<null, array{intColumn: int, stringNullColumn: string|null}>', $query);
+
+		$query = $em->createQueryBuilder()
+			->select(['MIN(m.intColumn)', 'MAX(m.stringNullColumn) as max'])
+			->from(Many::class, 'm')
+			->getQuery();
+
+		assertType('Doctrine\ORM\Query<null, array{intColumn: int|numeric-string|null, max: string|null}>', $query);
 	}
 
 	public function testIndexByInfering(EntityManagerInterface $em): void
