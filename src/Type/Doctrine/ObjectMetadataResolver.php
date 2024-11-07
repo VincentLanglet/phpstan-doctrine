@@ -106,6 +106,8 @@ final class ObjectMetadataResolver
 	}
 
 	/**
+	 * @api
+	 *
 	 * @template T of object
 	 * @param class-string<T> $className
 	 * @return ClassMetadata<T>|null
