@@ -29,6 +29,7 @@ final class ObjectMetadataResolver
 	/** @var string */
 	private $tmpDir;
 
+	/** @api */
 	public function __construct(
 		?string $objectManagerLoader,
 		string $tmpDir
