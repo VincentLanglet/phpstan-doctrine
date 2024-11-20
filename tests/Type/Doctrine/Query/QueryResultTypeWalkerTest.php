@@ -17,6 +17,7 @@ use PHPStan\Testing\PHPStanTestCase;
 use PHPStan\Type\Accessory\AccessoryArrayListType;
 use PHPStan\Type\Accessory\AccessoryLowercaseStringType;
 use PHPStan\Type\Accessory\AccessoryNumericStringType;
+use PHPStan\Type\Accessory\AccessoryUppercaseStringType;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantArrayTypeBuilder;
 use PHPStan\Type\Constant\ConstantFloatType;
@@ -1623,7 +1624,7 @@ final class QueryResultTypeWalkerTest extends PHPStanTestCase
 		return $builder->getArray();
 	}
 
-	private function numericString(bool $lowercase = false): Type
+	private function numericString(bool $lowercase = false, bool $uppercase = false): Type
 	{
 		$types = [
 			new StringType(),
@@ -1631,6 +1632,9 @@ final class QueryResultTypeWalkerTest extends PHPStanTestCase
 		];
 		if ($lowercase) {
 			$types[] = new AccessoryLowercaseStringType();
+		}
+		if ($uppercase) {
+			$types[] = new AccessoryUppercaseStringType();
 		}
 
 		return new IntersectionType($types);
