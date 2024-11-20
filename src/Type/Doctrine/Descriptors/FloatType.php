@@ -42,10 +42,7 @@ class FloatType implements DoctrineTypeDescriptor, DoctrineTypeDriverAwareDescri
 	{
 		return TypeCombinator::union(
 			new \PHPStan\Type\FloatType(),
-			new IntersectionType([
-				new StringType(),
-				new AccessoryNumericStringType(),
-			])
+			(new \PHPStan\Type\FloatType())->toString()
 		);
 	}
 
