@@ -1476,7 +1476,7 @@ final class QueryResultTypeWalkerTest extends PHPStanTestCase
 			$this->constantArray([
 				[new ConstantStringType('minusInt'), $this->stringifies() ? new ConstantStringType('-1') : new ConstantIntegerType(-1)],
 				[new ConstantStringType('minusFloat'), $this->stringifies() ? $this->numericString() : new ConstantFloatType(-0.1)],
-				[new ConstantStringType('minusIntRange'), $this->stringifies() ? $this->numericString(true) : IntegerRangeType::fromInterval(null, 0)],
+				[new ConstantStringType('minusIntRange'), $this->stringifies() ? $this->numericString(true, true) : IntegerRangeType::fromInterval(null, 0)],
 			]),
 			'
 				SELECT		-1 as minusInt,
@@ -1683,21 +1683,21 @@ final class QueryResultTypeWalkerTest extends PHPStanTestCase
 	private function intOrStringified(): Type
 	{
 		return $this->stringifies()
-			? $this->numericString(true)
+			? $this->numericString(true, true)
 			: new IntegerType();
 	}
 
 	private function uintOrStringified(): Type
 	{
 		return $this->stringifies()
-			? $this->numericString(true)
+			? $this->numericString(true, true)
 			: $this->uint();
 	}
 
 	private function floatOrStringified(): Type
 	{
 		return $this->stringifies()
-			? $this->numericString()
+			? $this->numericString(false, true)
 			: new FloatType();
 	}
 
