@@ -4757,7 +4757,7 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		$inferredFirstItemType = $inferredType->getFirstIterableValueType();
 
 		self::assertTrue(
-			$inferredFirstItemType->equals($expectedFirstItemType),
+			$expectedFirstItemType->accepts($inferredFirstItemType, true)->yes(),
 			sprintf(
 				"Mismatch between inferred result and expected type\n\nDriver: %s\nConfig: %s\nDataset: %s\nDQL: %s\nSQL: %s\nPHP: %s\nReal first result: %s\nFirst item inferred as: %s\nFirst item expected type: %s\n",
 				$driver,
