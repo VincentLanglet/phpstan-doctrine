@@ -142,7 +142,7 @@ final class QueryResultTypeWalkerHydrationModeTest extends PHPStanTestCase
 
 		yield 'getResult(object), fields' => [
 			self::list(self::constantArray([
-				[new ConstantStringType('decimalColumn'), self::numericString()],
+				[new ConstantStringType('decimalColumn'), self::numericString(false, true)],
 				[new ConstantStringType('floatColumn'), new FloatType()],
 			])),
 			'
@@ -178,7 +178,7 @@ final class QueryResultTypeWalkerHydrationModeTest extends PHPStanTestCase
 
 		yield 'toIterable(object), fields' => [
 			new IterableType(new IntegerType(), self::constantArray([
-				[new ConstantStringType('decimalColumn'), self::numericString()],
+				[new ConstantStringType('decimalColumn'), self::numericString(false, true)],
 				[new ConstantStringType('floatColumn'), new FloatType()],
 			])),
 			'

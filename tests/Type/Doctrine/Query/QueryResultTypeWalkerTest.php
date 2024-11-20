@@ -378,7 +378,7 @@ final class QueryResultTypeWalkerTest extends PHPStanTestCase
 				]),
 				$this->constantArray([
 					[new ConstantIntegerType(0), new ObjectType(One::class)],
-					[new ConstantStringType('id'), $hasDbal4 ? new IntegerType() : $this->numericString()],
+					[new ConstantStringType('id'), $hasDbal4 ? new IntegerType() : $this->numericString(true, true)],
 					[new ConstantStringType('intColumn'), new IntegerType()],
 				])
 			),
@@ -400,7 +400,7 @@ final class QueryResultTypeWalkerTest extends PHPStanTestCase
 				]),
 				$this->constantArray([
 					[new ConstantIntegerType(0), new ObjectType(Many::class)],
-					[new ConstantStringType('id'), $hasDbal4 ? new IntegerType() : $this->numericString()],
+					[new ConstantStringType('id'), $hasDbal4 ? new IntegerType() : $this->numericString(true, true)],
 					[new ConstantStringType('intColumn'), new IntegerType()],
 				])
 			),
@@ -421,7 +421,7 @@ final class QueryResultTypeWalkerTest extends PHPStanTestCase
 				]),
 				$this->constantArray([
 					[new ConstantStringType('one'), new ObjectType(One::class)],
-					[new ConstantStringType('id'), $hasDbal4 ? new IntegerType() : $this->numericString()],
+					[new ConstantStringType('id'), $hasDbal4 ? new IntegerType() : $this->numericString(true, true)],
 					[new ConstantStringType('intColumn'), new IntegerType()],
 				])
 			),
@@ -531,7 +531,7 @@ final class QueryResultTypeWalkerTest extends PHPStanTestCase
 		yield 'just root entity and scalars' => [
 			$this->constantArray([
 				[new ConstantIntegerType(0), new ObjectType(One::class)],
-				[new ConstantStringType('id'), $hasDbal4 ? new IntegerType() : $this->numericString()],
+				[new ConstantStringType('id'), $hasDbal4 ? new IntegerType() : $this->numericString(true, true)],
 			]),
 			'
 				SELECT		o, o.id

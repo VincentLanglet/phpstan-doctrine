@@ -3,7 +3,6 @@
 namespace PHPStan\Type\Doctrine\Descriptors;
 
 use Composer\InstalledVersions;
-use PHPStan\Type\Accessory\AccessoryNumericStringType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
