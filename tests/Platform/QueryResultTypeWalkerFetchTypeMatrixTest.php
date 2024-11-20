@@ -25,7 +25,9 @@ use PHPStan\Php\PhpVersion;
 use PHPStan\Platform\Entity\PlatformEntity;
 use PHPStan\Platform\Entity\PlatformRelatedEntity;
 use PHPStan\Testing\PHPStanTestCase;
+use PHPStan\Type\Accessory\AccessoryLowercaseStringType;
 use PHPStan\Type\Accessory\AccessoryNumericStringType;
+use PHPStan\Type\Accessory\AccessoryUppercaseStringType;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\Constant\ConstantFloatType;
@@ -925,7 +927,7 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield '1 + 1 * 1 / 1 - 1' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT (1 + 1 * 1 / 1 - 1) FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(true, true),
 			'sqlite' => self::int(),
 			'pdo_pgsql' => self::int(),
 			'pgsql' => self::int(),
@@ -1053,10 +1055,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 't.col_int + t.col_decimal' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT t.col_int + t.col_decimal FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(false, true),
 			'sqlite' => self::floatOrInt(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(false, true),
+			'pgsql' => self::numericString(false, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '9.1',
 			'sqliteResult' => 9.1,
@@ -1069,10 +1071,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 't.col_int + t.col_decimal (int data)' => [
 			'data' => self::dataAllIntLike(),
 			'select' => 'SELECT t.col_int + t.col_decimal FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(false, true),
 			'sqlite' => self::floatOrInt(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(false, true),
+			'pgsql' => self::numericString(false, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '2.0',
 			'sqliteResult' => 2,
@@ -1117,10 +1119,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 't.col_decimal + t.col_decimal (int data)' => [
 			'data' => self::dataAllIntLike(),
 			'select' => 'SELECT t.col_decimal + t.col_decimal FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(false, true),
 			'sqlite' => self::floatOrInt(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(false, true),
+			'pgsql' => self::numericString(false, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '2.0',
 			'sqliteResult' => 2,
@@ -1149,10 +1151,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 't.col_decimal + t.col_decimal' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT t.col_decimal + t.col_decimal FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(false, true),
 			'sqlite' => self::floatOrInt(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(false, true),
+			'pgsql' => self::numericString(false, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '0.2',
 			'sqliteResult' => 0.2,
@@ -1229,7 +1231,7 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 't.col_decimal + t.col_bool' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT t.col_decimal + t.col_bool FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(false, true),
 			'sqlite' => self::floatOrInt(),
 			'pdo_pgsql' => null, // Undefined function
 			'pgsql' => null, // Undefined function
@@ -1277,7 +1279,7 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 't.col_int / t.col_int' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT t.col_int / t.col_int FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(true, true),
 			'sqlite' => self::int(),
 			'pdo_pgsql' => self::int(),
 			'pgsql' => self::int(),
@@ -1293,7 +1295,7 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 't.col_bigint / t.col_bigint' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT t.col_bigint / t.col_bigint FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(true, true),
 			'sqlite' => self::int(),
 			'pdo_pgsql' => self::int(),
 			'pgsql' => self::int(),
@@ -1373,10 +1375,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 't.col_int / t.col_decimal' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT t.col_int / t.col_decimal FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(false, true),
 			'sqlite' => self::floatOrInt(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(false, true),
+			'pgsql' => self::numericString(false, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '90.0000',
 			'sqliteResult' => 90.0,
@@ -1389,10 +1391,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 't.col_int / t.col_decimal (int data)' => [
 			'data' => self::dataAllIntLike(),
 			'select' => 'SELECT t.col_int / t.col_decimal FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(false, true),
 			'sqlite' => self::floatOrInt(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(false, true),
+			'pgsql' => self::numericString(false, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.0000',
 			'sqliteResult' => 1,
@@ -1421,10 +1423,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 't.col_decimal / t.col_decimal' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT t.col_decimal / t.col_decimal FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(false, true),
 			'sqlite' => self::floatOrInt(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(false, true),
+			'pgsql' => self::numericString(false, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.00000',
 			'sqliteResult' => 1.0,
@@ -1437,10 +1439,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 't.col_decimal / t.col_decimal (int data)' => [
 			'data' => self::dataAllIntLike(),
 			'select' => 'SELECT t.col_decimal / t.col_decimal FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(false, true),
 			'sqlite' => self::floatOrInt(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(false, true),
+			'pgsql' => self::numericString(false, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.00000',
 			'sqliteResult' => 1,
@@ -1517,7 +1519,7 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 't.col_int / t.col_bool' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT t.col_int / t.col_bool FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(true, true),
 			'sqlite' => self::int(),
 			'pdo_pgsql' => null, // Undefined function
 			'pgsql' => null, // Undefined function
@@ -1565,7 +1567,7 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 't.col_decimal / t.col_bool' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT t.col_decimal / t.col_bool FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(false, true),
 			'sqlite' => self::floatOrInt(),
 			'pdo_pgsql' => null, // Undefined function
 			'pgsql' => null, // Undefined function
@@ -1581,7 +1583,7 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 't.col_decimal / t.col_bool (int data)' => [
 			'data' => self::dataAllIntLike(),
 			'select' => 'SELECT t.col_decimal / t.col_bool FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(false, true),
 			'sqlite' => self::floatOrInt(),
 			'pdo_pgsql' => null, // Undefined function
 			'pgsql' => null, // Undefined function
@@ -1629,7 +1631,7 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 't.col_int / t.col_int_nullable' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT t.col_int / t.col_int_nullable FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(true, true),
 			'sqlite' => self::intOrNull(),
 			'pdo_pgsql' => self::intOrNull(),
 			'pgsql' => self::intOrNull(),
@@ -1709,7 +1711,7 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield '1 / 1' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT (1 / 1) FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(true, true),
 			'sqlite' => self::int(),
 			'pdo_pgsql' => self::int(),
 			'pgsql' => self::int(),
@@ -1725,10 +1727,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield '1 / 1.0' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT (1 / 1.0) FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(true, true),
 			'sqlite' => self::float(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(true, true),
+			'pgsql' => self::numericString(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.0000',
 			'sqliteResult' => 1.0,
@@ -1743,8 +1745,8 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 			'select' => 'SELECT (1 / 1e0) FROM %s t',
 			'mysql' => self::float(),
 			'sqlite' => self::float(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(true, true),
+			'pgsql' => self::numericString(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => 1.0,
 			'sqliteResult' => 1.0,
@@ -1949,10 +1951,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'COALESCE(t.col_decimal, t.col_decimal) + int data' => [
 			'data' => self::dataAllIntLike(),
 			'select' => 'SELECT COALESCE(t.col_decimal, t.col_decimal) FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(false, true),
 			'sqlite' => self::floatOrInt(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(false, true),
+			'pgsql' => self::numericString(false, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.0',
 			'sqliteResult' => 1,
@@ -1997,11 +1999,11 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 't.col_decimal' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT t.col_decimal FROM %s t',
-			'mysql' => self::numericString(),
-			'sqlite' => self::numericString(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
-			'mssql' => self::numericString(),
+			'mysql' => self::numericString(false, true),
+			'sqlite' => self::numericString(false, true),
+			'pdo_pgsql' => self::numericString(false, true),
+			'pgsql' => self::numericString(false, true),
+			'mssql' => self::numericString(false, true),
 			'mysqlResult' => '0.1',
 			'sqliteResult' => '0.1',
 			'pdoPgsqlResult' => '0.1',
@@ -2029,11 +2031,11 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 't.col_bigint' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT t.col_bigint FROM %s t',
-			'mysql' => self::hasDbal4() ? self::int() : self::numericString(),
-			'sqlite' => self::hasDbal4() ? self::int() : self::numericString(),
-			'pdo_pgsql' => self::hasDbal4() ? self::int() : self::numericString(),
-			'pgsql' => self::hasDbal4() ? self::int() : self::numericString(),
-			'mssql' => self::hasDbal4() ? self::int() : self::numericString(),
+			'mysql' => self::hasDbal4() ? self::int() : self::numericString(true, true),
+			'sqlite' => self::hasDbal4() ? self::int() : self::numericString(true, true),
+			'pdo_pgsql' => self::hasDbal4() ? self::int() : self::numericString(true, true),
+			'pgsql' => self::hasDbal4() ? self::int() : self::numericString(true, true),
+			'mssql' => self::hasDbal4() ? self::int() : self::numericString(true, true),
 			'mysqlResult' => self::hasDbal4() ? 2147483648 : '2147483648',
 			'sqliteResult' => self::hasDbal4() ? 2147483648 : '2147483648',
 			'pdoPgsqlResult' => self::hasDbal4() ? 2147483648 : '2147483648',
@@ -2125,10 +2127,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'AVG(t.col_decimal)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT AVG(t.col_decimal) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(false, true),
 			'sqlite' => self::floatOrNull(),
-			'pdo_pgsql' => self::numericStringOrNull(),
-			'pgsql' => self::numericStringOrNull(),
+			'pdo_pgsql' => self::numericStringOrNull(false, true),
+			'pgsql' => self::numericStringOrNull(false, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '0.10000',
 			'sqliteResult' => 0.1,
@@ -2141,10 +2143,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'AVG(t.col_decimal) + int data' => [
 			'data' => self::dataAllIntLike(),
 			'select' => 'SELECT AVG(t.col_decimal) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(false, true),
 			'sqlite' => self::floatOrNull(),
-			'pdo_pgsql' => self::numericStringOrNull(),
-			'pgsql' => self::numericStringOrNull(),
+			'pdo_pgsql' => self::numericStringOrNull(false, true),
+			'pgsql' => self::numericStringOrNull(false, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.00000',
 			'sqliteResult' => 1.0,
@@ -2173,10 +2175,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'AVG(t.col_int)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT AVG(t.col_int) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(true, true),
 			'sqlite' => self::floatOrNull(),
-			'pdo_pgsql' => self::numericStringOrNull(),
-			'pgsql' => self::numericStringOrNull(),
+			'pdo_pgsql' => self::numericStringOrNull(true, true),
+			'pgsql' => self::numericStringOrNull(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '9.0000',
 			'sqliteResult' => 9.0,
@@ -2189,7 +2191,7 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'AVG(t.col_bool)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT AVG(t.col_bool) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(true, true),
 			'sqlite' => self::floatOrNull(),
 			'pdo_pgsql' => null, // Undefined function
 			'pgsql' => null, // Undefined function
@@ -2221,10 +2223,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'AVG(1)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT AVG(1) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(true, true),
 			'sqlite' => self::floatOrNull(),
-			'pdo_pgsql' => self::numericStringOrNull(),
-			'pgsql' => self::numericStringOrNull(),
+			'pdo_pgsql' => self::numericStringOrNull(true, true),
+			'pgsql' => self::numericStringOrNull(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.0000',
 			'sqliteResult' => 1.0,
@@ -2301,10 +2303,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'AVG(1) + GROUP BY' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT AVG(1) FROM %s t GROUP BY t.col_int',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(true, true),
 			'sqlite' => self::float(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(true, true),
+			'pgsql' => self::numericString(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.0000',
 			'sqliteResult' => 1.0,
@@ -2317,10 +2319,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'AVG(1.0)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT AVG(1.0) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(true, true),
 			'sqlite' => self::floatOrNull(),
-			'pdo_pgsql' => self::numericStringOrNull(),
-			'pgsql' => self::numericStringOrNull(),
+			'pdo_pgsql' => self::numericStringOrNull(true, true),
+			'pgsql' => self::numericStringOrNull(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.00000',
 			'sqliteResult' => 1.0,
@@ -2333,10 +2335,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'AVG(1e0)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT AVG(1.0) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(true, true),
 			'sqlite' => self::floatOrNull(),
-			'pdo_pgsql' => self::numericStringOrNull(),
-			'pgsql' => self::numericStringOrNull(),
+			'pdo_pgsql' => self::numericStringOrNull(true, true),
+			'pgsql' => self::numericStringOrNull(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.00000',
 			'sqliteResult' => 1.0,
@@ -2349,10 +2351,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'AVG(t.col_bigint)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT AVG(t.col_bigint) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(true, true),
 			'sqlite' => self::floatOrNull(),
-			'pdo_pgsql' => self::numericStringOrNull(),
-			'pgsql' => self::numericStringOrNull(),
+			'pdo_pgsql' => self::numericStringOrNull(true, true),
+			'pgsql' => self::numericStringOrNull(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '2147483648.0000',
 			'sqliteResult' => 2147483648.0,
@@ -2429,10 +2431,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'SUM(t.col_decimal)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT SUM(t.col_decimal) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(false, true),
 			'sqlite' => self::floatOrIntOrNull(),
-			'pdo_pgsql' => self::numericStringOrNull(),
-			'pgsql' => self::numericStringOrNull(),
+			'pdo_pgsql' => self::numericStringOrNull(false, true),
+			'pgsql' => self::numericStringOrNull(false, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '0.1',
 			'sqliteResult' => 0.1,
@@ -2445,10 +2447,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'SUM(t.col_decimal) + int data' => [
 			'data' => self::dataAllIntLike(),
 			'select' => 'SELECT SUM(t.col_decimal) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(false, true),
 			'sqlite' => self::floatOrIntOrNull(),
-			'pdo_pgsql' => self::numericStringOrNull(),
-			'pgsql' => self::numericStringOrNull(),
+			'pdo_pgsql' => self::numericStringOrNull(false, true),
+			'pgsql' => self::numericStringOrNull(false, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.0',
 			'sqliteResult' => 1,
@@ -2461,10 +2463,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'SUM(t.col_int)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT SUM(t.col_int) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(true, true),
 			'sqlite' => self::intOrNull(),
-			'pdo_pgsql' => TypeCombinator::union(self::numericStringOrNull(), self::intOrNull()),
-			'pgsql' => TypeCombinator::union(self::numericStringOrNull(), self::intOrNull()),
+			'pdo_pgsql' => TypeCombinator::union(self::numericStringOrNull(true, true), self::intOrNull()),
+			'pgsql' => TypeCombinator::union(self::numericStringOrNull(true, true), self::intOrNull()),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '9',
 			'sqliteResult' => 9,
@@ -2477,10 +2479,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield '-SUM(t.col_int)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT -SUM(t.col_int) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(true, true),
 			'sqlite' => self::intOrNull(),
-			'pdo_pgsql' => TypeCombinator::union(self::numericStringOrNull(), self::intOrNull()),
-			'pgsql' => TypeCombinator::union(self::numericStringOrNull(), self::intOrNull()),
+			'pdo_pgsql' => TypeCombinator::union(self::numericStringOrNull(true, true), self::intOrNull()),
+			'pgsql' => TypeCombinator::union(self::numericStringOrNull(true, true), self::intOrNull()),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '-9',
 			'sqliteResult' => -9,
@@ -2493,10 +2495,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield '-SUM(t.col_int) + no data' => [
 			'data' => self::dataNone(),
 			'select' => 'SELECT -SUM(t.col_int) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(true, true),
 			'sqlite' => self::intOrNull(),
-			'pdo_pgsql' => TypeCombinator::union(self::numericStringOrNull(), self::intOrNull()),
-			'pgsql' => TypeCombinator::union(self::numericStringOrNull(), self::intOrNull()),
+			'pdo_pgsql' => TypeCombinator::union(self::numericStringOrNull(true, true), self::intOrNull()),
+			'pgsql' => TypeCombinator::union(self::numericStringOrNull(true, true), self::intOrNull()),
 			'mssql' => self::mixed(),
 			'mysqlResult' => null,
 			'sqliteResult' => null,
@@ -2525,7 +2527,7 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'SUM(t.col_bool)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT SUM(t.col_bool) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(true, true),
 			'sqlite' => self::intOrNull(),
 			'pdo_pgsql' => null, // Undefined function
 			'pgsql' => null, // Undefined function
@@ -2621,10 +2623,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'SUM(1)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT SUM(1) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(true, true),
 			'sqlite' => self::intOrNull(),
-			'pdo_pgsql' => TypeCombinator::union(self::numericStringOrNull(), self::intOrNull()),
-			'pgsql' => TypeCombinator::union(self::numericStringOrNull(), self::intOrNull()),
+			'pdo_pgsql' => TypeCombinator::union(self::numericStringOrNull(true, true), self::intOrNull()),
+			'pgsql' => TypeCombinator::union(self::numericStringOrNull(true, true), self::intOrNull()),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1',
 			'sqliteResult' => 1,
@@ -2637,10 +2639,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'SUM(1) + GROUP BY' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT SUM(1) FROM %s t GROUP BY t.col_int',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(true, true),
 			'sqlite' => self::int(),
-			'pdo_pgsql' => TypeCombinator::union(self::numericString(), self::int()),
-			'pgsql' => TypeCombinator::union(self::numericString(), self::int()),
+			'pdo_pgsql' => TypeCombinator::union(self::numericString(true, true), self::int()),
+			'pgsql' => TypeCombinator::union(self::numericString(true, true), self::int()),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1',
 			'sqliteResult' => 1,
@@ -2653,10 +2655,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'SUM(1.0)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT SUM(1.0) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(true, true),
 			'sqlite' => self::floatOrNull(),
-			'pdo_pgsql' => self::numericStringOrNull(),
-			'pgsql' => self::numericStringOrNull(),
+			'pdo_pgsql' => self::numericStringOrNull(true, true),
+			'pgsql' => self::numericStringOrNull(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.0',
 			'sqliteResult' => 1.0,
@@ -2671,8 +2673,8 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 			'select' => 'SELECT SUM(1e0) FROM %s t',
 			'mysql' => self::floatOrNull(),
 			'sqlite' => self::floatOrNull(),
-			'pdo_pgsql' => self::numericStringOrNull(),
-			'pgsql' => self::numericStringOrNull(),
+			'pdo_pgsql' => self::numericStringOrNull(true, true),
+			'pgsql' => self::numericStringOrNull(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => 1.0,
 			'sqliteResult' => 1.0,
@@ -2685,10 +2687,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'SUM(t.col_bigint)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT SUM(t.col_bigint) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(true, true),
 			'sqlite' => self::intOrNull(),
-			'pdo_pgsql' => TypeCombinator::union(self::numericStringOrNull(), self::intOrNull()),
-			'pgsql' => TypeCombinator::union(self::numericStringOrNull(), self::intOrNull()),
+			'pdo_pgsql' => TypeCombinator::union(self::numericStringOrNull(true, true), self::intOrNull()),
+			'pgsql' => TypeCombinator::union(self::numericStringOrNull(true, true), self::intOrNull()),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '2147483648',
 			'sqliteResult' => 2147483648,
@@ -2749,10 +2751,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'MAX(t.col_decimal)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT MAX(t.col_decimal) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(false, true),
 			'sqlite' => self::floatOrIntOrNull(),
-			'pdo_pgsql' => self::numericStringOrNull(),
-			'pgsql' => self::numericStringOrNull(),
+			'pdo_pgsql' => self::numericStringOrNull(false, true),
+			'pgsql' => self::numericStringOrNull(false, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '0.1',
 			'sqliteResult' => 0.1,
@@ -2765,10 +2767,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'MAX(t.col_decimal) + int data' => [
 			'data' => self::dataAllIntLike(),
 			'select' => 'SELECT MAX(t.col_decimal) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(false, true),
 			'sqlite' => self::floatOrIntOrNull(),
-			'pdo_pgsql' => self::numericStringOrNull(),
-			'pgsql' => self::numericStringOrNull(),
+			'pdo_pgsql' => self::numericStringOrNull(false, true),
+			'pgsql' => self::numericStringOrNull(false, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.0',
 			'sqliteResult' => 1,
@@ -2861,10 +2863,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield "MAX('1')" => [
 			'data' => self::dataDefault(),
 			'select' => "SELECT MAX('1') FROM %s t",
-			'mysql' => self::numericStringOrNull(),
-			'sqlite' => self::numericStringOrNull(),
-			'pdo_pgsql' => self::numericStringOrNull(),
-			'pgsql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(true, true),
+			'sqlite' => self::numericStringOrNull(true, true),
+			'pdo_pgsql' => self::numericStringOrNull(true, true),
+			'pgsql' => self::numericStringOrNull(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1',
 			'sqliteResult' => '1',
@@ -2877,10 +2879,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield "MAX('1.0')" => [
 			'data' => self::dataDefault(),
 			'select' => "SELECT MAX('1.0') FROM %s t",
-			'mysql' => self::numericStringOrNull(),
-			'sqlite' => self::numericStringOrNull(),
-			'pdo_pgsql' => self::numericStringOrNull(),
-			'pgsql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(true, true),
+			'sqlite' => self::numericStringOrNull(true, true),
+			'pdo_pgsql' => self::numericStringOrNull(true, true),
+			'pgsql' => self::numericStringOrNull(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.0',
 			'sqliteResult' => '1.0',
@@ -2925,10 +2927,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'MAX(1.0)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT MAX(1.0) FROM %s t',
-			'mysql' => self::numericStringOrNull(),
+			'mysql' => self::numericStringOrNull(true, true),
 			'sqlite' => self::floatOrNull(),
-			'pdo_pgsql' => self::numericStringOrNull(),
-			'pgsql' => self::numericStringOrNull(),
+			'pdo_pgsql' => self::numericStringOrNull(true, true),
+			'pgsql' => self::numericStringOrNull(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.0',
 			'sqliteResult' => 1.0,
@@ -2943,8 +2945,8 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 			'select' => 'SELECT MAX(1e0) FROM %s t',
 			'mysql' => self::floatOrNull(),
 			'sqlite' => self::floatOrNull(),
-			'pdo_pgsql' => self::numericStringOrNull(),
-			'pgsql' => self::numericStringOrNull(),
+			'pdo_pgsql' => self::numericStringOrNull(true, true),
+			'pgsql' => self::numericStringOrNull(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => 1.0,
 			'sqliteResult' => 1.0,
@@ -2989,10 +2991,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'ABS(t.col_decimal)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT ABS(t.col_decimal) FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(false, true),
 			'sqlite' => self::floatOrInt(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(false, true),
+			'pgsql' => self::numericString(false, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '0.1',
 			'sqliteResult' => 0.1,
@@ -3005,10 +3007,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'ABS(t.col_decimal) + int data' => [
 			'data' => self::dataAllIntLike(),
 			'select' => 'SELECT ABS(t.col_decimal) FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(false, true),
 			'sqlite' => self::floatOrInt(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(false, true),
+			'pgsql' => self::numericString(false, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.0',
 			'sqliteResult' => 1,
@@ -3149,10 +3151,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'ABS(1.0)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT ABS(1.0) FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(true, true),
 			'sqlite' => self::float(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(true, true),
+			'pgsql' => self::numericString(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.0',
 			'sqliteResult' => 1.0,
@@ -3167,8 +3169,8 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 			'select' => 'SELECT ABS(1e0) FROM %s t',
 			'mysql' => self::float(),
 			'sqlite' => self::float(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(true, true),
+			'pgsql' => self::numericString(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => 1.0,
 			'sqliteResult' => 1.0,
@@ -3647,8 +3649,8 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 			'select' => 'SELECT SQRT(t.col_decimal) FROM %s t',
 			'mysql' => self::floatOrNull(),
 			'sqlite' => self::floatOrNull(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(false, true),
+			'pgsql' => self::numericString(false, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => 1.0,
 			'sqliteResult' => 1.0,
@@ -3823,8 +3825,8 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 			'select' => 'SELECT SQRT(1.0) FROM %s t',
 			'mysql' => self::float(),
 			'sqlite' => self::float(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(true, true),
+			'pgsql' => self::numericString(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => 1.0,
 			'sqliteResult' => 1.0,
@@ -4045,10 +4047,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'COALESCE(SUM(t.col_int_nullable), 0)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT COALESCE(SUM(t.col_int_nullable), 0) FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(true, true),
 			'sqlite' => self::int(),
-			'pdo_pgsql' => TypeCombinator::union(self::numericString(), self::int()),
-			'pgsql' => TypeCombinator::union(self::numericString(), self::int()),
+			'pdo_pgsql' => TypeCombinator::union(self::numericString(true, true), self::int()),
+			'pgsql' => TypeCombinator::union(self::numericString(true, true), self::int()),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '0',
 			'sqliteResult' => 0,
@@ -4061,10 +4063,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'COALESCE(SUM(ABS(t.col_int)), 0)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT COALESCE(SUM(ABS(t.col_int)), 0) FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(true, true),
 			'sqlite' => self::int(),
-			'pdo_pgsql' => TypeCombinator::union(self::int(), self::numericString()),
-			'pgsql' => TypeCombinator::union(self::int(), self::numericString()),
+			'pdo_pgsql' => TypeCombinator::union(self::int(), self::numericString(true, true)),
+			'pgsql' => TypeCombinator::union(self::int(), self::numericString(true, true)),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '9',
 			'sqliteResult' => 9,
@@ -4141,10 +4143,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield "COALESCE(1, '1')" => [
 			'data' => self::dataDefault(),
 			'select' => "SELECT COALESCE(1, '1') FROM %s t",
-			'mysql' => self::numericString(),
-			'sqlite' => TypeCombinator::union(self::int(), self::numericString()),
-			'pdo_pgsql' => TypeCombinator::union(self::int(), self::numericString()),
-			'pgsql' => TypeCombinator::union(self::int(), self::numericString()),
+			'mysql' => self::numericString(true, true),
+			'sqlite' => TypeCombinator::union(self::int(), self::numericString(true, true)),
+			'pdo_pgsql' => TypeCombinator::union(self::int(), self::numericString(true, true)),
+			'pgsql' => TypeCombinator::union(self::int(), self::numericString(true, true)),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1',
 			'sqliteResult' => 1,
@@ -4159,8 +4161,8 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 			'select' => 'SELECT COALESCE(1, 1.0) FROM %s t',
 			'mysql' => self::numericString(),
 			'sqlite' => TypeCombinator::union(self::int(), self::float()),
-			'pdo_pgsql' => TypeCombinator::union(self::int(), self::numericString()),
-			'pgsql' => TypeCombinator::union(self::int(), self::numericString()),
+			'pdo_pgsql' => TypeCombinator::union(self::int(), self::numericString(true, true)),
+			'pgsql' => TypeCombinator::union(self::int(), self::numericString(true, true)),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.0',
 			'sqliteResult' => 1,
@@ -4189,10 +4191,10 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		yield 'COALESCE(1.0, 1.0)' => [
 			'data' => self::dataDefault(),
 			'select' => 'SELECT COALESCE(1.0, 1.0) FROM %s t',
-			'mysql' => self::numericString(),
+			'mysql' => self::numericString(true, true),
 			'sqlite' => self::float(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(true, true),
+			'pgsql' => self::numericString(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1.0',
 			'sqliteResult' => 1.0,
@@ -4207,8 +4209,8 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 			'select' => 'SELECT COALESCE(1e0, 1.0) FROM %s t',
 			'mysql' => self::float(),
 			'sqlite' => self::float(),
-			'pdo_pgsql' => self::numericString(),
-			'pgsql' => self::numericString(),
+			'pdo_pgsql' => self::numericString(true, true),
+			'pgsql' => self::numericString(true, true),
 			'mssql' => self::mixed(),
 			'mysqlResult' => 1.0,
 			'sqliteResult' => 1.0,
@@ -4223,8 +4225,8 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 			'select' => 'SELECT COALESCE(1, 1.0, 1e0) FROM %s t',
 			'mysql' => self::float(),
 			'sqlite' => TypeCombinator::union(self::float(), self::int()),
-			'pdo_pgsql' => TypeCombinator::union(self::int(), self::numericString()),
-			'pgsql' => TypeCombinator::union(self::int(), self::numericString()),
+			'pdo_pgsql' => TypeCombinator::union(self::int(), self::numericString(true, true)),
+			'pgsql' => TypeCombinator::union(self::int(), self::numericString(true, true)),
 			'mssql' => self::mixed(),
 			'mysqlResult' => 1.0,
 			'sqliteResult' => 1,
@@ -4238,9 +4240,9 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 			'data' => self::dataDefault(),
 			'select' => "SELECT COALESCE(1, 1.0, 1e0, '1') FROM %s t",
 			'mysql' => self::numericString(),
-			'sqlite' => TypeCombinator::union(self::float(), self::int(), self::numericString()),
-			'pdo_pgsql' => TypeCombinator::union(self::int(), self::numericString()),
-			'pgsql' => TypeCombinator::union(self::int(), self::numericString()),
+			'sqlite' => TypeCombinator::union(self::float(), self::int(), self::numericString(true, true)),
+			'pdo_pgsql' => TypeCombinator::union(self::int(), self::numericString(true, true)),
+			'pgsql' => TypeCombinator::union(self::int(), self::numericString(true, true)),
 			'mssql' => self::mixed(),
 			'mysqlResult' => '1',
 			'sqliteResult' => 1,
@@ -4305,8 +4307,8 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 			'select' => 'SELECT COALESCE(t.col_float_nullable, 0.0) FROM %s t',
 			'mysql' => self::float(),
 			'sqlite' => self::float(),
-			'pdo_pgsql' => TypeCombinator::union(self::float(), self::numericString()),
-			'pgsql' => TypeCombinator::union(self::float(), self::numericString()),
+			'pdo_pgsql' => TypeCombinator::union(self::float(), self::numericString(false, true)),
+			'pgsql' => TypeCombinator::union(self::float(), self::numericString(false, true)),
 			'mssql' => self::mixed(),
 			'mysqlResult' => 0.0,
 			'sqliteResult' => 0.0,
@@ -4842,12 +4844,20 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		return TypeCombinator::addNull(new BooleanType());
 	}
 
-	private static function numericString(): Type
+	private static function numericString(bool $lowercase = false, bool $uppercase = false): Type
 	{
-		return new IntersectionType([
+		$types = [
 			new StringType(),
 			new AccessoryNumericStringType(),
-		]);
+		];
+		if ($lowercase) {
+			$types[] = new AccessoryLowercaseStringType();
+		}
+		if ($uppercase) {
+			$types[] = new AccessoryUppercaseStringType();
+		}
+
+		return new IntersectionType($types);
 	}
 
 	private static function string(): Type
@@ -4855,12 +4865,9 @@ final class QueryResultTypeWalkerFetchTypeMatrixTest extends PHPStanTestCase
 		return new StringType();
 	}
 
-	private static function numericStringOrNull(): Type
+	private static function numericStringOrNull(bool $lowercase = false, bool $uppercase = false): Type
 	{
-		return TypeCombinator::addNull(new IntersectionType([
-			new StringType(),
-			new AccessoryNumericStringType(),
-		]));
+		return TypeCombinator::addNull(self::numericString($lowercase, $uppercase));
 	}
 
 	private static function int(): Type
