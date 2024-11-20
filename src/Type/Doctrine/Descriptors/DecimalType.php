@@ -31,7 +31,7 @@ class DecimalType implements DoctrineTypeDescriptor, DoctrineTypeDriverAwareDesc
 
 	public function getWritableToPropertyType(): Type
 	{
-		return TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType());
+		return (new FloatType())->toString();
 	}
 
 	public function getWritableToDatabaseType(): Type

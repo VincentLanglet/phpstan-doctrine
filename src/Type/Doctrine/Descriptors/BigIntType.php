@@ -25,7 +25,7 @@ class BigIntType implements DoctrineTypeDescriptor
 			return new IntegerType();
 		}
 
-		return TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType());
+		return (new IntegerType())->toString();
 	}
 
 	public function getWritableToDatabaseType(): Type
