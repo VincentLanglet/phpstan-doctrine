@@ -1517,7 +1517,7 @@ final class QueryResultTypeWalkerTest extends PHPStanTestCase
 				$this->constantArray([
 					[
 						new ConstantIntegerType(1),
-						new StringType(),
+						new IntersectionType([new StringType(), new AccessoryLowercaseStringType()]),
 					],
 					[
 						new ConstantIntegerType(2),
@@ -1525,7 +1525,7 @@ final class QueryResultTypeWalkerTest extends PHPStanTestCase
 					],
 					[
 						new ConstantIntegerType(3),
-						$this->numericString(),
+						$this->numericString(true, true),
 					],
 				]),
 				'
