@@ -789,7 +789,7 @@ final class QueryResultTypeWalkerTest extends PHPStanTestCase
 				[
 					new ConstantIntegerType(4),
 					$this->stringifies()
-						? $this->numericString()
+						? $this->numericString(false, true)
 						: TypeCombinator::union(
 							new IntegerType(),
 							new FloatType()
@@ -1475,7 +1475,7 @@ final class QueryResultTypeWalkerTest extends PHPStanTestCase
 		yield 'unary minus' => [
 			$this->constantArray([
 				[new ConstantStringType('minusInt'), $this->stringifies() ? new ConstantStringType('-1') : new ConstantIntegerType(-1)],
-				[new ConstantStringType('minusFloat'), $this->stringifies() ? $this->numericString() : new ConstantFloatType(-0.1)],
+				[new ConstantStringType('minusFloat'), $this->stringifies() ? $this->numericString(false, true) : new ConstantFloatType(-0.1)],
 				[new ConstantStringType('minusIntRange'), $this->stringifies() ? $this->numericString(true, true) : IntegerRangeType::fromInterval(null, 0)],
 			]),
 			'

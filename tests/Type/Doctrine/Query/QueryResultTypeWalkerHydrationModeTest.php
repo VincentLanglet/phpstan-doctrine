@@ -309,7 +309,7 @@ final class QueryResultTypeWalkerHydrationModeTest extends PHPStanTestCase
 		return AccessoryArrayListType::intersectWith(new ArrayType(new IntegerType(), $values));
 	}
 
-	private static function numericString(bool $lowercase = false): Type
+	private static function numericString(bool $lowercase = false, bool $uppercase = false): Type
 	{
 		$types = [
 			new StringType(),
@@ -406,14 +406,14 @@ final class QueryResultTypeWalkerHydrationModeTest extends PHPStanTestCase
 	private static function floatOrStringified(): Type
 	{
 		return self::stringifies()
-			? self::numericString()
+			? self::numericString(false, true)
 			: new FloatType();
 	}
 
 	private static function floatOrIntOrStringified(): Type
 	{
 		return self::stringifies()
-			? self::numericString()
+			? self::numericString(false, true)
 			: TypeCombinator::union(new FloatType(), new IntegerType());
 	}
 
