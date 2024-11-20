@@ -1815,8 +1815,8 @@ class QueryResultTypeWalker extends SqlWalker
 			if ($this->containsOnlyTypes($unionWithoutNull, [new IntegerType(), $this->createNumericString(false)])) {
 				return $this->createNumericString(
 					$nullable,
-					$unionWithoutNull->isLowercaseString()->yes(),
-					$unionWithoutNull->isUppercaseString()->yes()
+					$unionWithoutNull->toString()->isLowercaseString()->yes(),
+					$unionWithoutNull->toString()->isUppercaseString()->yes()
 				);
 			}
 
@@ -1899,8 +1899,8 @@ class QueryResultTypeWalker extends SqlWalker
 			if ($this->containsOnlyTypes($unionWithoutNull, [new IntegerType(), $this->createNumericString(false)])) {
 				return $this->createNumericString(
 					$nullable,
-					$unionWithoutNull->isLowercaseString()->yes(),
-					$unionWithoutNull->isUppercaseString()->yes()
+					$unionWithoutNull->toString()->isLowercaseString()->yes(),
+					$unionWithoutNull->toString()->isUppercaseString()->yes()
 				);
 			}
 
